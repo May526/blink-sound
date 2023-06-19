@@ -120,11 +120,14 @@
     "python.testing.pytestArgs": [
         "tests",
         "--doctest-modules",
-        "my_package"
+        "ozyamamushi"
     ],
     "workbench.colorCustomizations": {
         "activityBar.background": "#1F3310",
         "titleBar.activeBackground": "#2B4716",
         "titleBar.activeForeground": "#F7FBF4"
-    }
+    },
+    "cSpell.words": [
+        "playsound"
+    ]
 }

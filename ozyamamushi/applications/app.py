@@ -4,36 +4,28 @@ import sys
 import time
 
 import cv2
-import IPython
 import numpy as np
+import sounddevice as sd
+import soundfile as sf
 from playsound import playsound
 
 from ozyamamushi import get_pj_root
 
-freqs = [0] + [440.0 * 2.0 ** ((i - 9) / 12.0) for i in range(12)]
-notes = ["R", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-dic = {}
-for i, s in enumerate(notes):
-    dic[s] = i
+sound_path = get_pj_root() + "\\data\\sounds\\剣で斬る1.mp3"
+sound_path = sound_path.replace("\\", "/")
+sig, sr = sf.read(sound_path, always_2d=True)
+sd.play(sig, sr)
 
-
-def play_mml(mml):
-    rate = 48000
-    BPM = 120
-    qn_duration = 60.0 / BPM
-    t = np.linspace(0.0, qn_duration, int(rate * qn_duration))
-    music = np.array([])
-    for s in list(mml):
-        f = freqs[dic[s]]
-        music = np.append(music, np.sin(2.0 * np.pi * f * t))
-    return IPython.display.Audio(music, rate=rate, autoplay=True)
-
-
-cascade_path = get_pj_root() + "/venv/Lib/site-packages/cv2/data/haarcascade_frontalface_alt2.xml"
+cascade_path = (
+    get_pj_root() + "/venv/Lib/site-packages/cv2/data/haarcascade_frontalface_alt2.xml"
+)
 assert os.path.exists(cascade_path) is True
 cascade = cv2.CascadeClassifier(cascade_path)
 
-eye_cascade_path = get_pj_root() + "/venv/Lib/site-packages/cv2/data/haarcascade_eye_tree_eyeglasses.xml"
+eye_cascade_path = (
+    get_pj_root()
+    + "/venv/Lib/site-packages/cv2/data/haarcascade_eye_tree_eyeglasses.xml"
+)
 assert os.path.exists(eye_cascade_path) is True
 eye_cascade = cv2.CascadeClassifier(eye_cascade_path)
 
@@ -42,6 +34,8 @@ no_blink_counter = 0
 no_blink_threshold = 5  # 5秒以上の瞬きのない閾値
 last_blink_time = time.time()
 l = [1, 2, 3, 4]
+playing_sound = False
+play_sound_start_time = 0
 
 cap = cv2.VideoCapture(0)
 while True:
@@ -89,8 +83,17 @@ while True:
 
         # if no_blink_counter >= 5 * 10:  # 約5秒以上瞬きがなければ（15fpsで計算）
         if time.time() - last_blink_time > 5:
-            sound_path = get_pj_root() + "\\data\\sounds\\剣で斬る1.mp3"
-            playsound(sound_path)
+            if playing_sound is False:
+                print("play sound")
+                # playsound(sound_path, block=False)
+                sig, sr = sf.read(sound_path, always_2d=True)
+                sd.play(sig, sr)
+                playing_sound = True
+                play_sound_start_time = time.time()
+            else:
+                if time.time() - play_sound_start_time > 3:
+                    playing_sound = False
+
             no_blink_counter = 0
         #     audio_num = random.choice(l)
         #     if audio_num == 1:
@@ -108,4 +111,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-

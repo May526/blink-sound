@@ -3,3 +3,5 @@ numpy
 playsound
 IPython
 scipy
+sounddevice
+soundfile

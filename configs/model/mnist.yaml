@@ -1,0 +1,27 @@
+_target_: ozyamamushi.litmodules.image.classification.litmodule_general.ImageClassificationLitModule
+
+model:
+  _target_: ozyamamushi.models.image.simple_conv_net.SimpleConvNet
+
+optimizer:
+  _partial_: True
+  _target_: torch.optim.AdamW
+  lr: 0.001
+  weight_decay: 0.0005
+
+optimizer_scheduler:
+  _partial_: True
+  _target_: torch.optim.lr_scheduler.StepLR
+  step_size: 10
+
+criterion:
+  _target_: torch.nn.CrossEntropyLoss
+
+metric_train:
+  _target_: torchmetrics.classification.accuracy.Accuracy
+metric_val:
+  _target_: torchmetrics.classification.accuracy.Accuracy
+metric_test:
+  _target_: torchmetrics.classification.accuracy.Accuracy
+metric_val_best:
+  _target_: torchmetrics.MaxMetric

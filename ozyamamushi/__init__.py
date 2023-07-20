@@ -1,8 +1,8 @@
 import os
-import sys
+
 
 def get_package_root() -> str:
-    return os.path.dirname(os.path.abspath(sys.argv[0]))
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 def get_pj_root() -> str:

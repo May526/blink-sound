@@ -1,7 +1,7 @@
 opencv-python
+numpy
 playsound
 IPython
+scipy
 sounddevice
 soundfile
-datetime
-pyinstaller
